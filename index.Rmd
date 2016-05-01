@@ -1,0 +1,56 @@
+---
+title: "Weight Lifting Assessment Report"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+  library(caret)
+  load('project.RData')
+  set.seed(1337)
+```
+
+
+## Loading in data
+Since we can not make predictions based on empty cells, these will be also treated as NA columns.
+
+```{r eval=FALSE}
+  rawTraining = read.table(file = 'pml-training.csv', sep = ',', header = T, na.strings=c("","NA"))
+  rawTesting = read.table(file = 'pml-testing.csv', sep = ',', header = T)
+```
+
+## Cleaning the data
+
+I am removing the first 7 columns, because these values are not important for our prediction. They contain user info and time data. Also I am removing all columns that had NA values inside. Then I am preprocessing so that the data is centered and scaled.
+```{r eval=FALSE}
+  trainingClean = rawTraining[,c(-1:-7)]
+  trainingNa <- trainingClean[,colSums(is.na(trainingClean)) == 0]
+  trainingPre = predict(preProcess(trainingNa), trainingNa)
+```
+
+## Splitting the data
+Finally I am splitting the data into training and validation dataset.
+```{r eval=FALSE}
+  inTrain = createDataPartition(trainingPre$classe, p = 3/4)[[1]]
+  training = trainingPre[ inTrain,]
+  validation = trainingPre[-inTrain,]
+```
+
+## Building the model
+
+First of all, I am setting the train control parameters. I am using k-fold cross-validation, original training data is partitioned into 10 subsamples.
+```{r eval=FALSE}
+trainctrl <- trainControl(verboseIter = TRUE, method="cv",number=10)
+```
+For training algorithm I chose rf, which is random forests.
+```{r eval=FALSE}
+modelRf = train(data = training, classe ~ ., method = 'rf', trControl = trainctrl)
+```
+After model is ready, I am testing it on my validation set and checking the accuracy
+```{r eval=F}
+predRf = predict(modelRf, newdata = validation)
+predRfConf = confusionMatrix(validation$classe, predRf)
+```
+Validation shows that accuracy is 0.9957, which is almost perfect.
+```{r }
+predRfConf
+``` 
