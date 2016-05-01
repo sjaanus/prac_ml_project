@@ -25,6 +25,10 @@ I am removing the first 7 columns, because these values are not important for ou
   trainingClean = rawTraining[,c(-1:-7)]
   trainingNa <- trainingClean[,colSums(is.na(trainingClean)) == 0]
   trainingPre = predict(preProcess(trainingNa), trainingNa)
+  
+  testingClean = rawTesting[,c(-1:-7)]
+  testing <- testingClean[,colSums(is.na(testingClean)) == 0]
+  testing = predict(preProcess(testing), testing)
 ```
 
 ## Splitting the data
@@ -53,4 +57,13 @@ predRfConf = confusionMatrix(validation$classe, predRf)
 Validation shows that accuracy is 0.9957, which is almost perfect.
 ```{r }
 predRfConf
+``` 
+
+## Predicting based on model
+When predicting on test data, the model is correct 20 out of 20.
+```{r eval=F}
+quizPrediction = predict(modelRf, testing)
+``` 
+```{r }
+quizPrediction
 ``` 
