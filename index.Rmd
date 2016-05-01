@@ -54,7 +54,7 @@ After model is ready, I am testing it on my validation set and checking the accu
 predRf = predict(modelRf, newdata = validation)
 predRfConf = confusionMatrix(validation$classe, predRf)
 ```
-Validation shows that accuracy is 0.9957, which is almost perfect.
+Validation shows that accuracy is 99.57%. Estimated out-of-sample error is therefore 0.43%.
 ```{r }
 predRfConf
 ``` 
