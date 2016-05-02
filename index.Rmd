@@ -20,23 +20,21 @@ Since we can not make predictions based on empty cells, these will be also treat
 
 ## Cleaning the data
 
-I am removing the first 7 columns, because these values are not important for our prediction. They contain user info and time data. Also I am removing all columns that had NA values inside. Then I am preprocessing so that the data is centered and scaled.
+I am removing the first 7 columns, because these values are not important for our prediction. They contain user info and time data. Also I am removing all columns that had NA values inside.
 ```{r eval=FALSE}
   trainingClean = rawTraining[,c(-1:-7)]
   trainingNa <- trainingClean[,colSums(is.na(trainingClean)) == 0]
-  trainingPre = predict(preProcess(trainingNa), trainingNa)
   
   testingClean = rawTesting[,c(-1:-7)]
   testing <- testingClean[,colSums(is.na(testingClean)) == 0]
-  testing = predict(preProcess(testing), testing)
 ```
 
 ## Splitting the data
 Finally I am splitting the data into training and validation dataset.
 ```{r eval=FALSE}
-  inTrain = createDataPartition(trainingPre$classe, p = 3/4)[[1]]
-  training = trainingPre[ inTrain,]
-  validation = trainingPre[-inTrain,]
+  inTrain = createDataPartition(trainingNa$classe, p = 3/4)[[1]]
+  training = trainingNa[ inTrain,]
+  validation = trainingNa[-inTrain,]
 ```
 
 ## Building the model
@@ -54,7 +52,7 @@ After model is ready, I am testing it on my validation set and checking the accu
 predRf = predict(modelRf, newdata = validation)
 predRfConf = confusionMatrix(validation$classe, predRf)
 ```
-Validation shows that accuracy is 99.57%. Estimated out-of-sample error is therefore 0.43%.
+Validation shows that accuracy is 99.37%. Estimated out-of-sample error is therefore 0.63%.
 ```{r }
 predRfConf
 ``` 
